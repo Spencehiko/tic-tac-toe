@@ -141,6 +141,7 @@ const { resetGame, handleClick } = store;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            transition: all 0.8s;
             @media (hover: hover) {
                 &:hover {
                     color: var(--vt-c-text-dark-2);
