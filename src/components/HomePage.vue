@@ -17,9 +17,13 @@ const { resetGame, handleClick } = store;
                     :key="cell"
                     @click="handleClick(row, cell)"
                 >
-                    <span :class="{ visible: board[row][cell] !== '' }">{{
-                        board[row][cell] || turn
-                    }}</span>
+                    <span
+                        :class="{
+                            visible: board[row][cell] !== '',
+                            'not-finished': !winner && board[row][cell] === '',
+                        }"
+                        >{{ board[row][cell] || turn }}</span
+                    >
                 </div>
             </div>
         </div>
@@ -78,7 +82,7 @@ const { resetGame, handleClick } = store;
                 }
                 @media (hover: hover) {
                     &:hover {
-                        span {
+                        span.not-finished {
                             opacity: 1;
                             font-size: 75px;
                         }
