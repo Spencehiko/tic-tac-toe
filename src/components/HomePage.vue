@@ -28,6 +28,15 @@ const { resetGame, handleClick } = store;
             </div>
         </div>
         <h1 class="winner" v-if="winner">{{ winner + " WON THE GAME!" }}</h1>
+        <h1
+            class="winner"
+            v-else-if="
+                !winner &&
+                board.every((b) => b[0].length && b[1].length && b[2].length)
+            "
+        >
+            IT'S A DRAW!
+        </h1>
         <div class="buttons">
             <button class="button" v-on:click="resetGame">RESET</button>
         </div>

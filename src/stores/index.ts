@@ -7,7 +7,7 @@ export const useStore = defineStore({
             ["", "", ""],
             ["", "", ""],
             ["", "", ""],
-        ],
+        ] as string[][],
         turn: "X" as "X" | "O",
         winner: null as null | string,
     }),
