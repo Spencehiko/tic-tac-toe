@@ -3,12 +3,23 @@ import { storeToRefs } from "pinia";
 import { useStore } from "../stores/index";
 
 const store = useStore();
-const { board, turn, winner } = storeToRefs(store);
-const { resetGame, handleClick } = store;
+const { board, turn, winner, switchButtonText, gameType } = storeToRefs(store);
+const { resetGame, handleClick, changeGameType } = store;
 </script>
 <template>
     <div class="home-page">
-        <h1 class="turn">{{ "TURN: " + turn }}</h1>
+        <h1 class="winner" v-if="winner">{{ winner + " WON THE GAME!" }}</h1>
+        <h1
+            class="winner"
+            v-else-if="
+                !winner &&
+                board.every((b) => b[0].length && b[1].length && b[2].length)
+            "
+        >
+            IT'S A DRAW!
+        </h1>
+        <h1 class="turn" v-else-if="!winner">{{ "TURN: " + turn }}</h1>
+        <br />
         <div class="board">
             <div class="row" v-for="row in [0, 1, 2]" :key="row">
                 <div
@@ -27,18 +38,11 @@ const { resetGame, handleClick } = store;
                 </div>
             </div>
         </div>
-        <h1 class="winner" v-if="winner">{{ winner + " WON THE GAME!" }}</h1>
-        <h1
-            class="winner"
-            v-else-if="
-                !winner &&
-                board.every((b) => b[0].length && b[1].length && b[2].length)
-            "
-        >
-            IT'S A DRAW!
-        </h1>
         <div class="buttons">
             <button class="button" v-on:click="resetGame">RESET</button>
+            <button class="button" v-on:click="changeGameType">
+                {{ switchButtonText }}
+            </button>
         </div>
     </div>
 </template>

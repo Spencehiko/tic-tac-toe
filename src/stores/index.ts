@@ -10,6 +10,10 @@ export const useStore = defineStore({
         ] as string[][],
         turn: "X" as "X" | "O",
         winner: null as null | string,
+        gameType: 2 as number,
+        switchButtonText: "PLAY SINGLEPLAYER" as
+            | "PLAY SINGLEPLAYER"
+            | "PLAY MULTIPLAYER",
     }),
     getters: {
         getBoard: (state) => state.board,
@@ -70,6 +74,12 @@ export const useStore = defineStore({
                     ? board[0][2]
                     : null;
             this.winner = winner;
+        },
+        changeGameType() {
+            this.gameType = 3 - this.gameType;
+            this.switchButtonText =
+                this.gameType === 2 ? "PLAY SINGLEPLAYER" : "PLAY MULTIPLAYER";
+            this.resetGame();
         },
     },
 });
