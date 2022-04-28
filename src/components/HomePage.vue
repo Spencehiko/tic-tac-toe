@@ -3,7 +3,8 @@ import { storeToRefs } from "pinia";
 import { useStore } from "../stores/index";
 
 const store = useStore();
-const { board, turn, winner, switchButtonText, gameType } = storeToRefs(store);
+const { board, turn, winner, switchButtonText, gameType, getGameType } =
+    storeToRefs(store);
 const { resetGame, handleClick, changeGameType } = store;
 </script>
 <template>
@@ -18,7 +19,9 @@ const { resetGame, handleClick, changeGameType } = store;
         >
             IT'S A DRAW!
         </h1>
-        <h1 class="turn" v-else-if="!winner">{{ "TURN: " + turn }}</h1>
+        <h1 class="turn" v-else-if="!winner">
+            {{ getGameType + " | TURN: " + turn }}
+        </h1>
         <br />
         <div class="board">
             <div class="row" v-for="row in [0, 1, 2]" :key="row">

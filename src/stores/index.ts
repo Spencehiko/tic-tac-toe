@@ -11,14 +11,17 @@ export const useStore = defineStore({
         turn: "X" as "X" | "O",
         winner: null as null | string,
         gameType: 2 as number,
-        switchButtonText: "PLAY SINGLEPLAYER" as
-            | "PLAY SINGLEPLAYER"
-            | "PLAY MULTIPLAYER",
+        switchButtonText: "TRY IMPOSSIBLE" as
+            | "TRY IMPOSSIBLE"
+            | "PLAY MULTIPLAYER"
+            | "PLAY EASY MODE",
     }),
     getters: {
         getBoard: (state) => state.board,
         getTurn: (state) => state.turn,
         getWinner: (state) => state.winner,
+        getGameType: (state) =>
+            state.gameType === 2 ? "MULTIPLAYER" : "SINGLEPLAYER",
     },
     actions: {
         resetGame() {
@@ -36,6 +39,38 @@ export const useStore = defineStore({
             this.board[row][col] = this.turn;
             this.turn = this.turn === "X" ? "O" : "X";
             this.checkWinner();
+            if (this.gameType === 1) {
+                this.playAI();
+            } else if (this.gameType === 3) {
+                this.playImpossibleAI();
+            }
+        },
+        playAI() {
+            if (this.winner) return;
+            const possibleMoves = [];
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (this.board[i][j] === "") {
+                        possibleMoves.push({ row: i, col: j });
+                    }
+                }
+            }
+            const randomMove =
+                possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+            this.board[randomMove.row][randomMove.col] = this.turn;
+            this.turn = this.turn === "X" ? "O" : "X";
+            this.checkWinner();
+        },
+        playImpossibleAI() {
+            if (this.winner) return;
+            const possibleMoves = [];
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (this.board[i][j] === "") {
+                        possibleMoves.push({ row: i, col: j });
+                    }
+                }
+            }
         },
         checkWinner() {
             const board = this.board;
@@ -76,9 +111,16 @@ export const useStore = defineStore({
             this.winner = winner;
         },
         changeGameType() {
-            this.gameType = 3 - this.gameType;
-            this.switchButtonText =
-                this.gameType === 2 ? "PLAY SINGLEPLAYER" : "PLAY MULTIPLAYER";
+            if (this.gameType === 1) {
+                this.gameType = 2;
+                this.switchButtonText = "PLAY MULTIPLAYER";
+            } else if (this.gameType === 2) {
+                this.gameType = 3;
+                this.switchButtonText = "PLAY EASY MODE";
+            } else {
+                this.gameType = 1;
+                this.switchButtonText = "TRY IMPOSSIBLE";
+            }
             this.resetGame();
         },
     },
