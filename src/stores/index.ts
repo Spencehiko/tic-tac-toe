@@ -11,10 +11,11 @@ export const useStore = defineStore({
         turn: "X" as "X" | "O",
         winner: null as null | string,
         gameType: 2 as number,
-        switchButtonText: "TRY IMPOSSIBLE" as
-            | "TRY IMPOSSIBLE"
-            | "PLAY MULTIPLAYER"
-            | "PLAY EASY MODE",
+        switchButtonText: "HARD MODE" as
+            | "HARD MODE"
+            | "MULTIPLAYER"
+            | "EASY MODE",
+        isMoveMade: false as boolean,
     }),
     getters: {
         getBoard: (state) => state.board,
@@ -79,8 +80,17 @@ export const useStore = defineStore({
                         Math.floor(Math.random() * 2) * 2
                     ] = this.turn;
                 }
-            } else if (possibleMoves.length === 6) {
-                console.log("second move");
+            } else if (
+                possibleMoves.length === 6 ||
+                possibleMoves.length === 4 ||
+                possibleMoves.length === 2
+            ) {
+                this.isMoveMade = false;
+                this.makeWinningMove();
+                if (this.isMoveMade) return;
+                this.blockWinningMove();
+                if (this.isMoveMade) return;
+                this.makeRandomMove();
             }
             this.turn = this.turn === "X" ? "O" : "X";
         },
@@ -101,6 +111,188 @@ export const useStore = defineStore({
             if (this.board[2][1] === "") return true;
             if (this.board[1][2] === "") return true;
             return false;
+        },
+        makeWinningMove() {
+            const possibleMoves = [];
+            // 0,0
+            if (
+                ((this.board[0][1] === "O" && this.board[0][2] === "O") ||
+                    (this.board[1][0] === "O" && this.board[2][0] === "O") ||
+                    (this.board[1][1] === "O" && this.board[2][2] === "O")) &&
+                this.board[0][0] === ""
+            ) {
+                possibleMoves.push({ row: 0, col: 0 });
+            }
+            // 0,1
+            if (
+                ((this.board[0][0] === "O" && this.board[0][2] === "O") ||
+                    (this.board[1][1] === "O" && this.board[2][1] === "O")) &&
+                this.board[0][1] === ""
+            ) {
+                possibleMoves.push({ row: 0, col: 1 });
+            }
+            // 0,2
+            if (
+                ((this.board[0][0] === "O" && this.board[0][1] === "O") ||
+                    (this.board[1][2] === "O" && this.board[2][2] === "O") ||
+                    (this.board[1][1] === "O" && this.board[2][0] === "O")) &&
+                this.board[0][2] === ""
+            ) {
+                possibleMoves.push({ row: 0, col: 2 });
+            }
+            // 1,0
+            if (
+                ((this.board[0][0] === "O" && this.board[2][0] === "O") ||
+                    (this.board[1][1] === "O" && this.board[1][2] === "O")) &&
+                this.board[1][0] === ""
+            ) {
+                possibleMoves.push({ row: 1, col: 0 });
+            }
+            // 1,1
+            if (
+                ((this.board[0][1] === "O" && this.board[2][1] === "O") ||
+                    (this.board[1][0] === "O" && this.board[1][2] === "O") ||
+                    (this.board[0][0] === "O" && this.board[2][2] === "O") ||
+                    (this.board[0][2] === "O" && this.board[2][0] === "O")) &&
+                this.board[1][1] === ""
+            ) {
+                possibleMoves.push({ row: 1, col: 1 });
+            }
+            // 1,2
+            if (
+                ((this.board[0][2] === "O" && this.board[2][2] === "O") ||
+                    (this.board[1][0] === "O" && this.board[1][1] === "O")) &&
+                this.board[1][2] === ""
+            ) {
+                possibleMoves.push({ row: 1, col: 2 });
+            }
+            // 2,0
+            if (
+                ((this.board[0][0] === "O" && this.board[1][0] === "O") ||
+                    (this.board[2][1] === "O" && this.board[2][2] === "O") ||
+                    (this.board[1][1] === "O" && this.board[0][2] === "O")) &&
+                this.board[2][0] === ""
+            ) {
+                possibleMoves.push({ row: 2, col: 0 });
+            }
+            // 2,1
+            if (
+                ((this.board[0][1] === "O" && this.board[1][1] === "O") ||
+                    (this.board[2][0] === "O" && this.board[2][2] === "O")) &&
+                this.board[2][1] === ""
+            ) {
+                possibleMoves.push({ row: 2, col: 1 });
+            }
+            // 2,2
+            if (
+                ((this.board[0][2] === "O" && this.board[1][2] === "O") ||
+                    (this.board[0][0] === "O" && this.board[1][1] === "O") ||
+                    (this.board[2][0] === "O" && this.board[2][1] === "O")) &&
+                this.board[2][2] === ""
+            ) {
+                possibleMoves.push({ row: 2, col: 2 });
+            }
+            if (possibleMoves.length > 0) {
+                this.board[possibleMoves[0].row][possibleMoves[0].col] = "O";
+                this.isMoveMade = true;
+                this.turn = this.turn === "X" ? "O" : "X";
+                this.checkWinner();
+            }
+        },
+        blockWinningMove() {
+            const possibleMoves = [];
+            // 0,0
+            if (
+                ((this.board[0][1] === "X" && this.board[0][2] === "X") ||
+                    (this.board[1][0] === "X" && this.board[2][0] === "X") ||
+                    (this.board[1][1] === "X" && this.board[2][2] === "X")) &&
+                this.board[0][0] === ""
+            ) {
+                possibleMoves.push({ row: 0, col: 0 });
+            }
+            // 0,1
+            if (
+                ((this.board[0][0] === "X" && this.board[0][2] === "X") ||
+                    (this.board[1][1] === "X" && this.board[2][1] === "X")) &&
+                this.board[0][1] === ""
+            ) {
+                possibleMoves.push({ row: 0, col: 1 });
+            }
+            // 0,2
+            if (
+                ((this.board[0][0] === "X" && this.board[0][1] === "X") ||
+                    (this.board[1][2] === "X" && this.board[2][2] === "X") ||
+                    (this.board[1][1] === "X" && this.board[2][0] === "X")) &&
+                this.board[0][2] === ""
+            ) {
+                possibleMoves.push({ row: 0, col: 2 });
+            }
+            // 1,0
+            if (
+                ((this.board[0][0] === "X" && this.board[2][0] === "X") ||
+                    (this.board[1][1] === "X" && this.board[1][2] === "X")) &&
+                this.board[1][0] === ""
+            ) {
+                possibleMoves.push({ row: 1, col: 0 });
+            }
+            // 1,1
+            if (
+                ((this.board[0][1] === "X" && this.board[2][1] === "X") ||
+                    (this.board[1][0] === "X" && this.board[1][2] === "X") ||
+                    (this.board[0][0] === "X" && this.board[2][2] === "X") ||
+                    (this.board[0][2] === "X" && this.board[2][0] === "X")) &&
+                this.board[1][1] === ""
+            ) {
+                possibleMoves.push({ row: 1, col: 1 });
+            }
+            // 1,2
+            if (
+                ((this.board[0][2] === "X" && this.board[2][2] === "X") ||
+                    (this.board[1][0] === "X" && this.board[1][1] === "X")) &&
+                this.board[1][2] === ""
+            ) {
+                possibleMoves.push({ row: 1, col: 2 });
+            }
+            // 2,0
+            if (
+                ((this.board[0][0] === "X" && this.board[1][0] === "X") ||
+                    (this.board[2][1] === "X" && this.board[2][2] === "X") ||
+                    (this.board[1][1] === "X" && this.board[0][2] === "X")) &&
+                this.board[2][0] === ""
+            ) {
+                possibleMoves.push({ row: 2, col: 0 });
+            }
+            // 2,1
+            if (
+                ((this.board[0][1] === "X" && this.board[1][1] === "X") ||
+                    (this.board[2][0] === "X" && this.board[2][2] === "X")) &&
+                this.board[2][1] === ""
+            ) {
+                possibleMoves.push({ row: 2, col: 1 });
+            }
+            // 2,2
+            if (
+                ((this.board[0][2] === "X" && this.board[1][2] === "X") ||
+                    (this.board[0][0] === "X" && this.board[1][1] === "X") ||
+                    (this.board[2][0] === "X" && this.board[2][1] === "X")) &&
+                this.board[2][2] === ""
+            ) {
+                possibleMoves.push({ row: 2, col: 2 });
+            }
+            if (possibleMoves.length > 0) {
+                this.board[possibleMoves[0].row][possibleMoves[0].col] = "O";
+                this.isMoveMade = true;
+                this.turn = this.turn === "X" ? "O" : "X";
+                this.checkWinner();
+            }
+        },
+        makeRandomMove() {
+            const random = Math.floor(Math.random() * 9);
+            if (this.board[Math.floor(random / 3)][random % 3] === "") {
+                this.board[Math.floor(random / 3)][random % 3] = this.turn;
+            } else {
+                this.makeRandomMove();
+            }
         },
         checkWinner() {
             const board = this.board;
@@ -143,13 +335,13 @@ export const useStore = defineStore({
         changeGameType() {
             if (this.gameType === 1) {
                 this.gameType = 2;
-                this.switchButtonText = "PLAY MULTIPLAYER";
+                this.switchButtonText = "HARD MODE";
             } else if (this.gameType === 2) {
                 this.gameType = 3;
-                this.switchButtonText = "PLAY EASY MODE";
+                this.switchButtonText = "EASY MODE";
             } else {
                 this.gameType = 1;
-                this.switchButtonText = "TRY IMPOSSIBLE";
+                this.switchButtonText = "MULTIPLAYER";
             }
             this.resetGame();
         },
