@@ -71,6 +71,36 @@ export const useStore = defineStore({
                     }
                 }
             }
+            if (possibleMoves.length === 8) {
+                if (this.isCenterEmpty()) {
+                    this.board[1][1] = this.turn;
+                } else {
+                    this.board[Math.floor(Math.random() * 2) * 2][
+                        Math.floor(Math.random() * 2) * 2
+                    ] = this.turn;
+                }
+            } else if (possibleMoves.length === 6) {
+                console.log("second move");
+            }
+            this.turn = this.turn === "X" ? "O" : "X";
+        },
+        isCenterEmpty() {
+            if (this.board[1][1] === "") return true;
+            return false;
+        },
+        isEdgeEmpty() {
+            if (this.board[0][0] === "") return true;
+            if (this.board[0][2] === "") return true;
+            if (this.board[2][0] === "") return true;
+            if (this.board[2][2] === "") return true;
+            return false;
+        },
+        isSideEmpty() {
+            if (this.board[0][1] === "") return true;
+            if (this.board[1][0] === "") return true;
+            if (this.board[2][1] === "") return true;
+            if (this.board[1][2] === "") return true;
+            return false;
         },
         checkWinner() {
             const board = this.board;
