@@ -13,7 +13,7 @@ export const useStore = defineStore({
         gameType: 2 as number,
         switchButtonText: "HARD MODE" as
             | "HARD MODE"
-            | "MULTIPLAYER"
+            | "TWO PLAYERS"
             | "EASY MODE",
         isMoveMade: false as boolean,
     }),
@@ -341,7 +341,7 @@ export const useStore = defineStore({
                 this.switchButtonText = "EASY MODE";
             } else {
                 this.gameType = 1;
-                this.switchButtonText = "MULTIPLAYER";
+                this.switchButtonText = "TWO PLAYERS";
             }
             this.resetGame();
         },
